@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahul Pradip Choudhary — AI/ML Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050810;
+    --surface: #0a0f1e;
+    --card: #0d1428;
+    --accent1: #00f5c4;
+    --accent2: #7c6fff;
+    --accent3: #ff6b6b;
+    --text: #e8eaf0;
+    --muted: #6b7290;
+    --border: rgba(255,255,255,0.07);
+    --glow1: rgba(0,245,196,0.15);
+    --glow2: rgba(124,111,255,0.15);
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed; width: 12px; height: 12px;
+    background: var(--accent1); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, opacity 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-trail {
+    position: fixed; width: 36px; height: 36px;
+    border: 1.5px solid var(--accent1); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.35s cubic-bezier(.25,.46,.45,.94), opacity 0.3s;
+    opacity: 0.5;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset:0; z-index:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events:none; opacity:0.4;
+  }
+
+  /* ANIMATED BG GRID */
+  .grid-bg {
+    position: fixed; inset:0; z-index:0;
+    background-image:
+      linear-gradient(rgba(0,245,196,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,196,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove {
+    from { transform: translateY(0); }
+    to { transform: translateY(60px); }
+  }
+
+  /* FLOATING ORBS */
+  .orb {
+    position: fixed; border-radius:50%; filter:blur(100px);
+    pointer-events:none; z-index:0; animation: orbFloat 8s ease-in-out infinite;
+  }
+  .orb1 { width:500px; height:500px; background:var(--glow2); top:-200px; left:-200px; animation-delay:0s; }
+  .orb2 { width:400px; height:400px; background:var(--glow1); bottom:-100px; right:-100px; animation-delay:-4s; }
+  .orb3 { width:300px; height:300px; background:rgba(255,107,107,0.08); top:50%; left:50%; animation-delay:-2s; }
+  @keyframes orbFloat {
+    0%,100% { transform:translate(0,0) scale(1); }
+    50% { transform:translate(30px,-30px) scale(1.05); }
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top:0; left:0; right:0; z-index:100;
+    padding: 1.2rem 3rem;
+    display:flex; align-items:center; justify-content:space-between;
+    background: rgba(5,8,16,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    animation: slideDown 0.8s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes slideDown { from { transform:translateY(-100%); opacity:0; } to { transform:translateY(0); opacity:1; } }
+  .nav-logo {
+    font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem;
+    color:var(--accent1); letter-spacing:2px; text-decoration:none;
+  }
+  .nav-links { display:flex; gap:2.5rem; list-style:none; }
+  .nav-links a {
+    font-family:'Space Mono',monospace; font-size:0.72rem; letter-spacing:1px;
+    color:var(--muted); text-decoration:none; text-transform:uppercase;
+    transition:color 0.3s; position:relative;
+  }
+  .nav-links a::after {
+    content:''; position:absolute; bottom:-4px; left:0; right:0; height:1px;
+    background:var(--accent1); transform:scaleX(0); transition:transform 0.3s;
+  }
+  .nav-links a:hover { color:var(--accent1); }
+  .nav-links a:hover::after { transform:scaleX(1); }
+
+  /* SECTIONS */
+  section { position:relative; z-index:1; }
+
+  /* HERO */
+  #hero {
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding: 6rem 3rem 3rem;
+    text-align:center;
+    flex-direction:column;
+  }
+  .hero-tag {
+    font-family:'Space Mono',monospace; font-size:0.7rem; letter-spacing:4px;
+    color:var(--accent1); text-transform:uppercase;
+    background:rgba(0,245,196,0.08); border:1px solid rgba(0,245,196,0.2);
+    padding:0.4rem 1.2rem; border-radius:50px;
+    margin-bottom:2rem;
+    animation: fadeUp 0.8s 0.3s cubic-bezier(.22,1,.36,1) both;
+  }
+  .hero-name {
+    font-family:'Syne',sans-serif; font-weight:800;
+    font-size: clamp(3rem,8vw,7rem);
+    line-height:0.95; letter-spacing:-2px;
+    background: linear-gradient(135deg, #fff 0%, var(--accent1) 40%, var(--accent2) 80%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    animation: fadeUp 0.9s 0.5s cubic-bezier(.22,1,.36,1) both;
+  }
+  .hero-role {
+    font-family:'DM Sans',sans-serif; font-size:clamp(1rem,2vw,1.3rem);
+    color:var(--muted); margin-top:1.5rem; font-weight:300; letter-spacing:1px;
+    animation: fadeUp 0.9s 0.7s cubic-bezier(.22,1,.36,1) both;
+  }
+  .hero-role span { color:var(--accent1); }
+  .hero-desc {
+    max-width:580px; margin:2rem auto 0;
+    font-size:1rem; line-height:1.8; color:var(--muted);
+    animation: fadeUp 0.9s 0.9s cubic-bezier(.22,1,.36,1) both;
+  }
+  .hero-cta {
+    display:flex; gap:1rem; margin-top:3rem; justify-content:center;
+    animation: fadeUp 0.9s 1.1s cubic-bezier(.22,1,.36,1) both;
+  }
+  .btn {
+    font-family:'Space Mono',monospace; font-size:0.75rem; letter-spacing:2px;
+    text-transform:uppercase; text-decoration:none; padding:0.9rem 2rem;
+    border-radius:4px; transition:all 0.3s; position:relative; overflow:hidden;
+  }
+  .btn-primary {
+    background:var(--accent1); color:var(--bg); font-weight:700;
+  }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,245,196,0.3); }
+  .btn-ghost {
+    border:1px solid var(--border); color:var(--text);
+    background:transparent;
+  }
+  .btn-ghost:hover { border-color:var(--accent2); color:var(--accent2); transform:translateY(-2px); }
+
+  .hero-scroll {
+    position:absolute; bottom:2rem; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:0.5rem;
+    animation: fadeUp 1s 1.5s both;
+  }
+  .scroll-line {
+    width:1px; height:60px; background:linear-gradient(to bottom, var(--accent1), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse { 0%,100%{opacity:1;transform:scaleY(1)} 50%{opacity:0.3;transform:scaleY(0.5)} }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+
+  /* SECTION HEADER */
+  .section-header {
+    text-align:center; margin-bottom:4rem;
+  }
+  .section-label {
+    font-family:'Space Mono',monospace; font-size:0.68rem; letter-spacing:4px;
+    color:var(--accent1); text-transform:uppercase; margin-bottom:0.8rem;
+    display:block;
+  }
+  .section-title {
+    font-family:'Syne',sans-serif; font-weight:800;
+    font-size:clamp(2rem,4vw,3.2rem); letter-spacing:-1px;
+    color:var(--text);
+  }
+  .section-title span { color:var(--accent1); }
+
+  /* ABOUT */
+  #about { padding: 8rem 3rem; }
+  .about-grid {
+    max-width:1100px; margin:0 auto;
+    display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center;
+  }
+  .about-visual {
+    position:relative; display:flex; align-items:center; justify-content:center;
+  }
+  .about-avatar {
+    width:280px; height:280px; border-radius:20px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent1));
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+    font-family:'Syne',sans-serif; font-size:5rem; font-weight:800;
+    color:var(--bg); letter-spacing:-3px;
+    box-shadow: 0 0 80px rgba(124,111,255,0.3), 0 0 160px rgba(0,245,196,0.1);
+  }
+  .about-avatar::before {
+    content:''; position:absolute; inset:0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px);
+  }
+  .about-ring {
+    position:absolute; inset:-20px; border:1px solid rgba(0,245,196,0.2);
+    border-radius:30px; animation: rotateSlow 20s linear infinite;
+  }
+  .about-ring2 {
+    position:absolute; inset:-40px; border:1px dashed rgba(124,111,255,0.15);
+    border-radius:40px; animation: rotateSlow 30s linear infinite reverse;
+  }
+  @keyframes rotateSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  .stat-badges {
+    position:absolute; display:contents;
+  }
+  .stat-badge {
+    position:absolute;
+    background:var(--card); border:1px solid var(--border);
+    padding:0.8rem 1.2rem; border-radius:12px;
+    font-family:'Space Mono',monospace; font-size:0.65rem;
+    backdrop-filter:blur(10px);
+    animation: badgeFloat 4s ease-in-out infinite;
+  }
+  .stat-badge .num { font-size:1.4rem; font-weight:700; color:var(--accent1); display:block; }
+  .stat-badge:nth-child(1) { top:-20px; right:-30px; animation-delay:0s; }
+  .stat-badge:nth-child(2) { bottom:10px; left:-30px; animation-delay:-2s; }
+  @keyframes badgeFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  .about-content h3 {
+    font-family:'Syne',sans-serif; font-size:2rem; font-weight:700; margin-bottom:1.5rem;
+  }
+  .about-content p { color:var(--muted); line-height:1.9; margin-bottom:1.2rem; }
+  .about-tags { display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:1.5rem; }
+  .tag {
+    font-family:'Space Mono',monospace; font-size:0.65rem; letter-spacing:1px;
+    padding:0.35rem 0.9rem; border-radius:4px; text-transform:uppercase;
+    background:rgba(0,245,196,0.08); color:var(--accent1);
+    border:1px solid rgba(0,245,196,0.2);
+    transition:all 0.3s;
+  }
+  .tag:hover { background:rgba(0,245,196,0.15); transform:translateY(-2px); }
+
+  /* SKILLS */
+  #skills { padding:8rem 3rem; background: linear-gradient(180deg, transparent, rgba(124,111,255,0.03), transparent); }
+  .skills-grid {
+    max-width:1100px; margin:0 auto;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem;
+  }
+  .skill-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:16px; padding:2rem;
+    transition:all 0.4s cubic-bezier(.22,1,.36,1);
+    position:relative; overflow:hidden;
+  }
+  .skill-card::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg, var(--glow1), transparent);
+    opacity:0; transition:opacity 0.4s;
+  }
+  .skill-card:hover { transform:translateY(-6px); border-color:rgba(0,245,196,0.3); }
+  .skill-card:hover::before { opacity:1; }
+  .skill-icon {
+    width:44px; height:44px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.3rem; margin-bottom:1.2rem;
+  }
+  .skill-title { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; margin-bottom:0.8rem; }
+  .skill-list { color:var(--muted); font-size:0.85rem; line-height:1.8; }
+
+  /* EXPERIENCE */
+  #experience { padding:8rem 3rem; }
+  .timeline {
+    max-width:800px; margin:0 auto;
+    position:relative;
+  }
+  .timeline::before {
+    content:''; position:absolute; left:0; top:0; bottom:0;
+    width:1px; background:linear-gradient(to bottom, var(--accent1), var(--accent2), transparent);
+  }
+  .timeline-item {
+    padding-left:3rem; margin-bottom:3.5rem; position:relative;
+    opacity:0; transform:translateX(-20px);
+    transition:all 0.6s cubic-bezier(.22,1,.36,1);
+  }
+  .timeline-item.visible { opacity:1; transform:translateX(0); }
+  .timeline-dot {
+    position:absolute; left:-7px; top:6px;
+    width:14px; height:14px; border-radius:50%;
+    background:var(--accent1); border:2px solid var(--bg);
+    box-shadow:0 0 20px var(--accent1);
+  }
+  .timeline-date {
+    font-family:'Space Mono',monospace; font-size:0.65rem; letter-spacing:2px;
+    color:var(--accent2); text-transform:uppercase; margin-bottom:0.5rem;
+  }
+  .timeline-role {
+    font-family:'Syne',sans-serif; font-size:1.3rem; font-weight:700; margin-bottom:0.3rem;
+  }
+  .timeline-company {
+    font-size:0.9rem; color:var(--accent1); margin-bottom:1rem;
+  }
+  .timeline-desc { color:var(--muted); font-size:0.9rem; line-height:1.8; }
+  .timeline-desc li { margin-bottom:0.5rem; padding-left:1rem; position:relative; list-style:none; }
+  .timeline-desc li::before { content:'→'; position:absolute; left:0; color:var(--accent1); font-size:0.8rem; }
+
+  /* PROJECTS */
+  #projects { padding:8rem 3rem; }
+  .projects-grid {
+    max-width:1100px; margin:0 auto;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:1.5rem;
+  }
+  .project-card {
+    background:var(--card); border:1px solid var(--border); border-radius:16px;
+    padding:2rem; position:relative; overflow:hidden;
+    transition:all 0.4s cubic-bezier(.22,1,.36,1);
+    opacity:0; transform:translateY(20px);
+  }
+  .project-card.visible { opacity:1; transform:translateY(0); }
+  .project-card::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg, transparent 60%, var(--glow2));
+    opacity:0; transition:opacity 0.4s;
+  }
+  .project-card:hover { transform:translateY(-8px); border-color:rgba(124,111,255,0.4); }
+  .project-card:hover::after { opacity:1; }
+  .project-num {
+    font-family:'Space Mono',monospace; font-size:0.65rem; color:var(--muted);
+    margin-bottom:1rem;
+  }
+  .project-title {
+    font-family:'Syne',sans-serif; font-size:1.2rem; font-weight:700; margin-bottom:0.8rem;
+  }
+  .project-desc { color:var(--muted); font-size:0.88rem; line-height:1.8; margin-bottom:1.5rem; }
+  .project-stack { display:flex; flex-wrap:wrap; gap:0.4rem; }
+  .stack-tag {
+    font-family:'Space Mono',monospace; font-size:0.6rem;
+    padding:0.25rem 0.7rem; border-radius:4px;
+    background:rgba(124,111,255,0.1); color:var(--accent2);
+    border:1px solid rgba(124,111,255,0.2);
+  }
+  .project-highlight {
+    position:absolute; top:1.5rem; right:1.5rem;
+    font-family:'Space Mono',monospace; font-size:0.6rem;
+    background:rgba(0,245,196,0.1); color:var(--accent1);
+    border:1px solid rgba(0,245,196,0.2); padding:0.25rem 0.6rem; border-radius:4px;
+  }
+
+  /* ACHIEVEMENTS */
+  #achievements { padding:8rem 3rem; }
+  .achievements-grid {
+    max-width:900px; margin:0 auto;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.2rem;
+  }
+  .achievement-card {
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:1.5rem; display:flex; gap:1rem; align-items:flex-start;
+    transition:all 0.3s; opacity:0; transform:scale(0.95);
+  }
+  .achievement-card.visible { opacity:1; transform:scale(1); }
+  .achievement-card:hover { border-color:rgba(255,107,107,0.3); transform:translateY(-3px); }
+  .ach-icon { font-size:1.5rem; flex-shrink:0; }
+  .ach-text { font-size:0.88rem; color:var(--muted); line-height:1.7; }
+  .ach-text strong { color:var(--text); font-weight:600; }
+
+  /* CONTACT */
+  #contact { padding:8rem 3rem; text-align:center; }
+  .contact-inner {
+    max-width:700px; margin:0 auto;
+  }
+  .contact-headline {
+    font-family:'Syne',sans-serif; font-size:clamp(2.5rem,5vw,4.5rem);
+    font-weight:800; letter-spacing:-2px;
+    background:linear-gradient(135deg, var(--text), var(--accent2));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    margin-bottom:1.5rem;
+  }
+  .contact-sub { color:var(--muted); margin-bottom:3rem; line-height:1.8; }
+  .contact-links { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+  .contact-link {
+    font-family:'Space Mono',monospace; font-size:0.75rem; letter-spacing:1px;
+    text-decoration:none; padding:1rem 2rem; border-radius:8px;
+    border:1px solid var(--border); color:var(--text);
+    transition:all 0.3s; display:flex; align-items:center; gap:0.5rem;
+    background:var(--card);
+  }
+  .contact-link:hover { border-color:var(--accent1); color:var(--accent1); transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,245,196,0.15); }
+  .contact-link svg { width:16px; height:16px; }
+
+  /* FOOTER */
+  footer {
+    padding:2rem 3rem; text-align:center;
+    border-top:1px solid var(--border);
+    font-family:'Space Mono',monospace; font-size:0.65rem; color:var(--muted);
+    letter-spacing:2px;
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity:0; transform:translateY(30px);
+    transition:all 0.7s cubic-bezier(.22,1,.36,1);
+  }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  /* COUNTER ANIMATION */
+  .count-up { display:inline-block; }
+
+  /* GLITCH */
+  @keyframes glitch {
+    0% { clip-path:inset(0 0 90% 0); transform:translate(-4px); }
+    20% { clip-path:inset(40% 0 40% 0); transform:translate(4px); }
+    40% { clip-path:inset(80% 0 0% 0); transform:translate(-2px); }
+    60% { clip-path:inset(10% 0 70% 0); transform:translate(3px); }
+    80% { clip-path:inset(60% 0 20% 0); transform:translate(-3px); }
+    100% { clip-path:inset(0 0 90% 0); transform:translate(0); }
+  }
+
+  /* RESPONSIVE */
+  @media(max-width:768px){
+    nav { padding:1rem 1.5rem; }
+    .nav-links { display:none; }
+    #hero { padding:5rem 1.5rem 3rem; }
+    .about-grid { grid-template-columns:1fr; gap:3rem; }
+    .about-visual { display:none; }
+    section { padding-left:1.5rem !important; padding-right:1.5rem !important; }
+    .timeline::before { display:none; }
+    .timeline-item { padding-left:0; }
+    .timeline-dot { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+<div class="grid-bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">RPC</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-tag">✦ Open to Opportunities</div>
+  <h1 class="hero-name">Rahul Pradip<br>Choudhary</h1>
+  <p class="hero-role">
+    <span>AI / ML Engineer</span> · Full-Stack Developer · Automation Specialist
+  </p>
+  <p class="hero-desc">
+    Building intelligent systems at the intersection of machine learning, computer vision, and scalable automation. Currently crafting smart grid solutions at Landis+Gyr.
+  </p>
+  <div class="hero-cta">
+    <a href="mailto:rahulpradipchoudhary9860@gmail.com" class="btn btn-primary">Get In Touch</a>
+    <a href="https://github.com/rahulpradipchoudhary" target="_blank" class="btn btn-ghost">View GitHub</a>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-label">// 01 — Who I Am</span>
+    <h2 class="section-title">About <span>Me</span></h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-visual">
+      <div class="about-ring"></div>
+      <div class="about-ring2"></div>
+      <div class="about-avatar">RC</div>
+      <div class="stat-badge">
+        <span class="num">20%</span>Error Rate Reduction
+      </div>
+      <div class="stat-badge">
+        <span class="num">98%</span>Test Coverage
+      </div>
+    </div>
+    <div class="about-content reveal">
+      <h3>Building the Future<br>with <span style="color:var(--accent1)">Intelligence</span></h3>
+      <p>I'm a passionate AI/ML Engineer with a strong foundation in computer vision, deep learning, and full-stack development. Currently at Landis+Gyr in Noida, I build intelligent systems for smart grid infrastructure.</p>
+      <p>From training ML models to automating QA pipelines with 98%+ coverage, I thrive at the intersection of research and production engineering. I was promoted from consultant to full-time engineer in just 6 months.</p>
+      <p>B.Tech in Computer Science from Maharana Pratap Engineering College (CGPA: 7.65), with hands-on experience across the full AI lifecycle — from data labeling to deployment.</p>
+      <div class="about-tags">
+        <span class="tag">Machine Learning</span>
+        <span class="tag">Computer Vision</span>
+        <span class="tag">NLP / LLMs</span>
+        <span class="tag">Automation</span>
+        <span class="tag">Full-Stack</span>
+        <span class="tag">Smart Grid</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-header reveal">
+    <span class="section-label">// 02 — What I Use</span>
+    <h2 class="section-title">Technical <span>Skills</span></h2>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-icon" style="background:rgba(0,245,196,0.1)">🤖</div>
+      <div class="skill-title">AI / ML & GenAI</div>
+      <div class="skill-list">TensorFlow · PyTorch · Scikit-learn · LangChain · HuggingFace · Transformers · OpenCV · NLP · LLMs · Generative AI · NLTK</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon" style="background:rgba(124,111,255,0.1)">⚙️</div>
+      <div class="skill-title">Languages & Scripting</div>
+      <div class="skill-list">Python · C · C++ · C# · JavaScript · SQL · PowerShell · Bash · Shell Script · Windows Batch · VBScript</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon" style="background:rgba(255,107,107,0.1)">🌐</div>
+      <div class="skill-title">Web & Backend</div>
+      <div class="skill-list">React.js · Node.js · Express.js · .NET · Flask · REST APIs · MongoDB · MySQL · HTML · CSS</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon" style="background:rgba(0,245,196,0.1)">🐳</div>
+      <div class="skill-title">DevOps & Tools</div>
+      <div class="skill-list">Docker · Robot Framework · Git · GitHub · GitLab · Gerrit · Roboflow · Postman · VS Code</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon" style="background:rgba(124,111,255,0.1)">📊</div>
+      <div class="skill-title">Data & Libraries</div>
+      <div class="skill-list">Pandas · NumPy · Matplotlib · BeautifulSoup · PyAutoGUI · PyQt5 · SpeechRecognition · requests</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon" style="background:rgba(255,107,107,0.1)">🧠</div>
+      <div class="skill-title">Core CS</div>
+      <div class="skill-list">Data Structures & Algorithms · OOP · Operating Systems · DBMS · Artificial Intelligence · Networking</div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-header reveal">
+    <span class="section-label">// 03 — Where I've Worked</span>
+    <h2 class="section-title">Work <span>Experience</span></h2>
+  </div>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-date">Apr 2025 – Present</div>
+      <div class="timeline-role">AI / ML Engineer</div>
+      <div class="timeline-company">Landis+Gyr — Noida, India (Full-time)</div>
+      <ul class="timeline-desc">
+        <li>Develop and optimize ML models for smart grid meters using Python, computer vision, and Roboflow image labeling</li>
+        <li>Automate QA pipelines using Robot Framework, Windows Batch scripts, and PowerShell — maintaining 98%+ test coverage</li>
+        <li>Parse and process XML/JSON meter data through REST APIs and backend Windows scripts for model input preparation</li>
+        <li>Drove a 20% reduction in model error rates via cross-functional testing and deployment pipelines</li>
+      </ul>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-date">Oct 2024 – Mar 2025</div>
+      <div class="timeline-role">AI / ML Consultant</div>
+      <div class="timeline-company">Genius Consultants Ltd. (Client: Landis+Gyr) — Noida, India</div>
+      <ul class="timeline-desc">
+        <li>Trained and tested ML models for smart grid applications; prepared datasets using Roboflow and XML/JSON pipelines</li>
+        <li>Authored Windows batch scripts and shell commands to automate data preprocessing and Robot Framework test suites</li>
+        <li>Converted to full-time AI/ML Engineer at Landis+Gyr in 6 months based on outstanding performance</li>
+      </ul>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--accent2); box-shadow:0 0 20px var(--accent2)"></div>
+      <div class="timeline-date">Dec 2022 – May 2023</div>
+      <div class="timeline-role">Software Developer Intern → Team Leader</div>
+      <div class="timeline-company">GAOTek Inc. — United States (Remote)</div>
+      <ul class="timeline-desc">
+        <li>Designed, developed, and deployed software solutions using modern frameworks and industry best practices</li>
+        <li>Promoted to Team Leader in just 3 months — mentored interns, led training sessions, resolved technical challenges</li>
+        <li>Boosted team productivity by 30% through CRM-driven database schema design and business development initiatives</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header reveal">
+    <span class="section-label">// 04 — What I've Built</span>
+    <h2 class="section-title">Featured <span>Projects</span></h2>
+  </div>
+  <div class="projects-grid">
+    <div class="project-card">
+      <div class="project-highlight">70% Time Saved</div>
+      <div class="project-num">01 —</div>
+      <div class="project-title">Smart Log Analyzer</div>
+      <div class="project-desc">Notepad++ plugin parsing XML/JSON/plain logs with NLP & LLM-powered pattern detection via batch and shell automation. Integrated GenAI summarization to auto-classify error/warning patterns.</div>
+      <div class="project-stack">
+        <span class="stack-tag">Python</span>
+        <span class="stack-tag">C++</span>
+        <span class="stack-tag">LLM</span>
+        <span class="stack-tag">GenAI</span>
+        <span class="stack-tag">NLP</span>
+        <span class="stack-tag">Docker</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-highlight">98% Accuracy</div>
+      <div class="project-num">02 —</div>
+      <div class="project-title">Face Recognition Attendance</div>
+      <div class="project-desc">Automated attendance system using facial recognition with 98% accuracy in face detection. Reduced manual tracking time by 90% using real-time computer vision and REST API integration.</div>
+      <div class="project-stack">
+        <span class="stack-tag">Python</span>
+        <span class="stack-tag">ML</span>
+        <span class="stack-tag">OpenCV</span>
+        <span class="stack-tag">SQL</span>
+        <span class="stack-tag">REST API</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-highlight">98% Speech Accuracy</div>
+      <div class="project-num">03 —</div>
+      <div class="project-title">Hexa — AI Virtual Assistant</div>
+      <div class="project-desc">AI assistant with 98% speech accuracy, Google/Wikipedia search, 10,000+ song library, alarm & note management. Built with NLP, SpeechRecognition, and a custom PyQt5 interface.</div>
+      <div class="project-stack">
+        <span class="stack-tag">Python</span>
+        <span class="stack-tag">NLP</span>
+        <span class="stack-tag">PyQt5</span>
+        <span class="stack-tag">SpeechRecognition</span>
+        <span class="stack-tag">PyAutoGUI</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-highlight">Full Stack</div>
+      <div class="project-num">04 —</div>
+      <div class="project-title">Sip & Savour — Food Delivery</div>
+      <div class="project-desc">Full-stack food delivery platform with real-time order tracking, secure authentication, and integrated payment processing. Built with the MERN stack for scalable performance.</div>
+      <div class="project-stack">
+        <span class="stack-tag">React.js</span>
+        <span class="stack-tag">Node.js</span>
+        <span class="stack-tag">Express</span>
+        <span class="stack-tag">MongoDB</span>
+        <span class="stack-tag">JavaScript</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="section-header reveal">
+    <span class="section-label">// 05 — Milestones</span>
+    <h2 class="section-title">Achievements & <span>Certs</span></h2>
+  </div>
+  <div class="achievements-grid">
+    <div class="achievement-card">
+      <div class="ach-icon">🚀</div>
+      <div class="ach-text"><strong>Full-time Conversion</strong><br>Converted from AI/ML Consultant to full-time Engineer at Landis+Gyr in just 6 months.</div>
+    </div>
+    <div class="achievement-card">
+      <div class="ach-icon">⬆️</div>
+      <div class="ach-text"><strong>Team Leader Promotion</strong><br>Promoted to Team Leader at GAOTek Inc. within just 3 months of joining as a Software Developer Intern.</div>
+    </div>
+    <div class="achievement-card">
+      <div class="ach-icon">📉</div>
+      <div class="ach-text"><strong>20% Error Rate Reduction</strong><br>Achieved measurable AI model improvement at Landis+Gyr through systematic testing and cross-team collaboration.</div>
+    </div>
+    <div class="achievement-card">
+      <div class="ach-icon">🏆</div>
+      <div class="ach-text"><strong>Top Performer</strong><br>Ranked top participant in national-level Python quiz competition hosted by Sigma University.</div>
+    </div>
+    <div class="achievement-card">
+      <div class="ach-icon">📜</div>
+      <div class="ach-text"><strong>Certifications</strong><br>HackerRank (2) · Perfect eLearning (5) · Internship Completions (2) — full list on LinkedIn.</div>
+    </div>
+    <div class="achievement-card">
+      <div class="ach-icon">⚡</div>
+      <div class="ach-text"><strong>30% Productivity Boost</strong><br>Boosted team efficiency at GAOTek through CRM-driven database schema design and business development.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner reveal">
+    <h2 class="contact-headline">Let's Build Something Remarkable</h2>
+    <p class="contact-sub">I'm always open to discussing new opportunities, collaborations, or just talking tech. Based in Noida, India — available for remote work globally.</p>
+    <div class="contact-links">
+      <a href="mailto:rahulpradipchoudhary9860@gmail.com" class="contact-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Email
+      </a>
+      <a href="https://linkedin.com/in/rahul-pradip-choudhary-25b57621b" target="_blank" class="contact-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+      <a href="https://github.com/rahulpradipchoudhary" target="_blank" class="contact-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a href="tel:+919322532716" class="contact-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 0 0 1 2.18 2 2 0 013 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        +91 93225 32716
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>✦ RAHUL PRADIP CHOUDHARY — NOIDA, INDIA · DESIGNED & BUILT WITH PRECISION ✦</p>
+</footer>
+
+<script>
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const trail = document.getElementById('cursorTrail');
+  let mx=0,my=0,tx=0,ty=0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx+'px'; cursor.style.top = my+'px';
+  });
+  function animateTrail() {
+    tx += (mx-tx)*0.12; ty += (my-ty)*0.12;
+    trail.style.left = tx+'px'; trail.style.top = ty+'px';
+    requestAnimationFrame(animateTrail);
+  }
+  animateTrail();
+  document.querySelectorAll('a,button,.skill-card,.project-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.transform='translate(-50%,-50%) scale(2)'; trail.style.opacity='0.2'; });
+    el.addEventListener('mouseleave', () => { cursor.style.transform='translate(-50%,-50%) scale(1)'; trail.style.opacity='0.5'; });
+  });
+
+  // SCROLL REVEAL
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e,i) => {
+      if(e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i*80);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal,.timeline-item,.project-card,.achievement-card').forEach(el => observer.observe(el));
+
+  // STAGGER skill cards
+  document.querySelectorAll('.skill-card').forEach((c,i)=>{ c.style.transitionDelay = i*0.08+'s'; });
+  document.querySelectorAll('.project-card').forEach((c,i)=>{ c.style.transitionDelay = i*0.1+'s'; });
+  document.querySelectorAll('.achievement-card').forEach((c,i)=>{ c.style.transitionDelay = i*0.07+'s'; });
+  document.querySelectorAll('.timeline-item').forEach((c,i)=>{ c.style.transitionDelay = i*0.15+'s'; });
+
+  // ACTIVE NAV LINK
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if(window.scrollY >= s.offsetTop - 200) current = s.id; });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#'+current ? 'var(--accent1)' : '';
+    });
+  });
+</script>
+</body>
+</html>
